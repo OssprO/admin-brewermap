@@ -1,0 +1,339 @@
+<div class="animated fadeIn">
+	<form [formGroup]="eventoForm" (ngSubmit)="guardarEvento()" novalidate>
+		<div class="row">
+			<div class="col-md-10">
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Información General
+						<div class="card-actions">
+							<a class="btn-close" href="#"><i class="icon-arrow-up"></i></a>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-8">
+								<div class="form-group">
+									<label for="id-cerveceria">ID</label>
+									<input class="form-control form-control-sm"
+										id="eventoid"
+										name="eventoid"
+										type="text"
+										formControlName="eventoid">
+								</div>
+								<div class="form-group">
+									<label for="nombre-cerveceria">Nombre</label>
+									<input 
+										class="form-control form-control-lg"
+										[ngClass]="{ 'is-invalid': !eventoForm.get('nombre').valid && eventoForm.get('nombre').touched }"
+										id="nombre"
+										name="nombre"
+										type="text"
+										formControlName="nombre">
+									<div *ngIf="eventoForm.controls.nombre.errors?.required" class="invalid-feedback">
+										<div>Requerido</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="nf-email">Tipo</label>
+									<select
+										class="form-control"
+										[ngClass]="{ 'is-invalid': !eventoForm.get('tipo').valid && eventoForm.get('tipo').touched }"
+										id="tipo"
+										name="tipo"
+										formControlName="tipo">
+										<option value="">Seleccionar...</option>
+										<option [value]="item" *ngFor="let item of tiposEvento | enumToArray">{{item}}</option>
+									</select>
+									<div *ngIf="eventoForm.controls.tipo.errors?.required" class="invalid-feedback">
+										<div>Requerido</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label for="id-cerveceria">Imagen Principal</label>
+									<div class="card text-dark bg-secondary text-center" style="min-height: 230px;">
+										<div class="card-body">
+											<!--<input id="file-input" name="file-input" type="file">-->
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-12">
+								<div class="form-group">
+									<label for="descripcion">Descripción</label>
+									<textarea
+										class="form-control"
+										id="descripcion"
+										name="descripcion"
+										rows="4"
+										formControlName="descripcion">
+									</textarea>
+								</div>
+								<div class="form-group">
+									<label for="organizador">Organizador</label>
+									<input
+										class="form-control"
+										id="organizador"
+										name="organizador"
+										type="text"
+										formControlName="organizador">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Dirección
+					</div>
+					<div class="card-body">
+						<div formGroupName="direccion">
+							<div class="row">
+								<div class="col-12">
+									<div class="form-group">
+										<label for="descripcion-evento">Dirección</label>
+										<textarea
+											class="form-control"
+											id="descripcion-evento"
+											name="textarea-input"
+											rows="2"
+											formControlName="direccion">
+										</textarea>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="">País</label>
+										<ng-select 
+											[allowClear]="true"
+											[items]="countries"
+											(data)="refreshValueCountry( $event, eventoForm, i )"
+											[active]="[getActiveCountry( eventoForm, i)]" 
+											placeholder="Seleccionar..." 
+											autocomplete="off">
+										</ng-select>
+										<input type="hidden" name="pais" id="pais" [(ngModel)]="eventoForm.value.direccion.pais" formControlName="pais">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group" *ngIf="estados[i]">
+										<label for="">Estado</label>
+										<ng-select 
+											[allowClear]="true"
+											[items]="estados[i]"
+											(data)="refreshValueState( $event, eventoForm, i )"
+											[active]="[getActiveState( eventoForm, i )]" 
+											placeholder="Seleccionar..." >
+										</ng-select>
+										<input type="hidden" name="estado" id="estado" [(ngModel)]="eventoForm.value.direccion.estado" formControlName="estado">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group" *ngIf="eventoForm.value.direccion.estado" >
+										<label for="">Municipio</label>
+										<input class="form-control" type="text" id="municipio" name="municipio" formControlName="municipio">
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-12">
+									<div class="form-group" formGroupName="ubicacion">
+										<div class="row">
+											<div class="col-md-4">
+												<div formArrayName="coordinates">
+													<div>
+														<div class="form-group">
+															<label for="">Latitud</label>
+															<input class="form-control" type="number" id="latitud" name="latitud" formControlName="1">
+														</div>
+
+														<div class="form-group">
+															<label for="">Logitud</label>
+															<input class="form-control" type="number" id="longitud" name="longitud" formControlName="0">
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-8">
+												<label for="">Mapa</label>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Horarios
+						<div class="card-actions">
+							<button class="btn-setting" type="button" (click)="agregarHorario(eventoForm)"><i class="icon-plus"></i></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div formArrayName="horarios">
+							<div *ngFor="let red of eventoForm.controls.horarios.controls; let i=index;">
+								<div [formGroupName]="i">
+									<div class="row">
+										<div class="col-md-3">
+											<div class="form-group">
+												<label for="">Día</label>
+												<select
+													class="form-control"
+													id="dia"
+													name="dia"
+													formControlName="dia">
+													<option value=""></option>
+													<option [value]="item" *ngFor="let item of diasSemana | enumToArray">{{item}}</option>
+												</select>
+
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">Apertura</label>
+												<input class="form-control" type="text">
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">Cierrre</label>
+												<input class="form-control" type="text">
+											</div>
+										</div>
+										<div class="col-md-1">
+											<label for="">Eliminar</label>
+											<button class="btn btn-md btn-danger" type="button" (click)="removerHorario(eventoForm,i)"><i class="icon-close"></i></button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Social Media
+						<div class="card-actions">
+							<button class="btn-setting" type="button" (click)="agregarSocialMedia(eventoForm)"><i class="icon-plus"></i></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div formArrayName="socialmedia">
+							<div *ngFor="let red of eventoForm.controls.socialmedia.controls; let i=index;">
+								<div [formGroupName]="i">
+									<div class="row">
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">Red</label>
+												<select class="form-control" name="red" id="red" formControlName="red">
+													<option value="0">Seleccionar...</option>
+													<option value="1">Uno</option>
+													<option value="2">Dos</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-7">
+											<div class="form-group">
+												<label for="">URL</label>
+												<input class="form-control" type="text" name="url" id="url" formControlName="url">
+											</div>
+										</div>
+										<div class="col-md-1">
+											<label for="">Eliminar</label>
+											<button class="btn btn-md btn-danger" type="button" (click)="removerSocialMedia(eventoForm,i)"><i class="icon-close"></i></button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Teléfonos
+						<div class="card-actions">
+							<button class="btn-setting" type="button" (click)="agregarTelefono(eventoForm)"><i class="icon-plus"></i></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div formArrayName="telefonos">
+							<div *ngFor="let telefono of eventoForm.controls.telefonos.controls; let i=index;">
+								<div [formGroupName]="i">
+									<div class="row">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="">Lugar</label>
+										<select class="form-control" name="lugar" id="lugar" formControlName="lugar">
+											<option value="0">Seleccionar...</option>
+											<option value="1">Uno</option>
+											<option value="2">Dos</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-7">
+									<div class="form-group">
+										<label for="">Número</label>
+										<input class="form-control" type="text" name="numero" id="numero" formControlName="numero">
+									</div>
+								</div>
+								<div class="col-md-1">
+									<label for="">_</label>
+									<button class="btn btn-md btn-danger" type="button" (click)="removerTelefono(eventoForm,i)"><i class="icon-close"></i></button>
+								</div>
+							</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Cervecerías
+						<div class="card-actions">
+							<a class="btn-setting" href="#"><i class="icon-plus"></i></a>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-3">
+								<div class="card text-dark bg-secondary text-center" style="min-height: 180px;">
+									<!--Contenido Aquí-->
+								</div>
+							</div>
+							<div class="col-3">
+								<div class="card text-dark bg-secondary text-center" style="min-height: 180px;">
+									<!--Contenido Aquí-->
+								</div>
+							</div>
+							<div class="col-3">
+								<div class="card text-dark bg-secondary text-center" style="min-height: 180px;">
+									<!--Contenido Aquí-->
+								</div>
+							</div>
+
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2 text-right">
+				<button class="btn btn-md btn-dark text-white btn-block" type="submit" [disabled]="!eventoForm.valid">Guardar</button>
+			</div>
+		</div>
+	</form>
+</div>

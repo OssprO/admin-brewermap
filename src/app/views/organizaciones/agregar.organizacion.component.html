@@ -1,0 +1,273 @@
+<div class="animated fadeIn">
+	<form [formGroup]="organizacionForm" (ngSubmit)="guardarOrganizacion()" novalidate>
+		<div class="row">
+			<div class="col-md-10">
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Información General
+						<div class="card-actions">
+							<a class="btn-close" href="#"><i class="icon-arrow-up"></i></a>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-8">
+								<div class="form-group">
+									<label for="organizacionid">ID</label>
+									<input 
+										class="form-control form-control-sm"
+										id="organizacionid"
+										name="organizacionid"
+										type="text"
+										formControlName="organizacionid">
+								</div>
+								<div class="form-group">
+									<label for="nombre">Nombre</label>
+									<input
+										class="form-control form-control-lg"
+										[ngClass]="{ 'is-invalid': !organizacionForm.get('nombre').valid && organizacionForm.get('nombre').touched }"
+										id="nombre"
+										name="nombre"
+										type="text"
+										formControlName="nombre">
+									<div *ngIf="organizacionForm.controls.nombre.errors?.required" class="invalid-feedback">
+										<div>Requerido</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="tipo">Tipo</label>
+									<select
+										class="form-control"
+										[ngClass]="{ 'is-invalid': !organizacionForm.get('tipo').valid && organizacionForm.get('tipo').touched }"
+										id="tipo"
+										name="tipo"
+										formControlName="tipo">
+										<option value="">Seleccionar...</option>
+										<option [value]="item" *ngFor="let item of tiposOrganizacion | enumToArray">{{item}}</option>
+									</select>
+									<div *ngIf="organizacionForm.controls.tipo.errors?.required" class="invalid-feedback">
+										<div>Requerido</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label for="id-cerveceria">Imagen Principal</label>
+									<div class="card text-dark bg-secondary text-center" style="min-height: 230px;">
+										<div class="card-body">
+											<!--<input id="file-input" name="file-input" type="file">-->
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-12">
+								<div class="form-group">
+									<label for="descripcion">Descripción</label>
+									<textarea
+										class="form-control"
+										id="descripcion"
+										name="descripcion"
+										rows="4"
+										formControlName="descripcion">
+									</textarea>
+								</div>
+								<div class="form-group">
+									<label for="representante">Representante</label>
+									<input
+										class="form-control"
+										id="representante"
+										name="representante"
+										type="text"
+										formControlName="representante">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Direcciones
+						<div class="card-actions">
+							<button class="btn-setting" type="button" (click)="agregarDireccion(organizacionForm)"><i class="icon-plus"></i></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div formArrayName="direcciones">
+							<div *ngFor="let direccion of organizacionForm.controls.direcciones.controls; let i=index;">
+								<div [formGroupName]="i">
+									<div class="row">
+										<div class="col-6">
+											<h3>Dirección: {{ i }}</h3>
+										</div>
+										<div class="col-6 text-right">
+											<button class="btn btn-md btn-danger" type="button" (click)="removerDireccion(organizacionForm, i)"><i class="icon-close"></i></button>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="form-group">
+												<label for="direccion">Dirección</label>
+												<textarea
+													class="form-control"
+													id="direccion"
+													name="textarea-input"
+													rows="2"
+													formControlName="direccion">
+												</textarea>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">País</label>
+												<select class="form-control"  name="pais" id="pais" class="form-control" formControlName="pais">
+													<option value="0">Seleccionar...</option>
+													<option value="1">Uno</option>
+													<option value="2">Dos</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">Estado</label>
+												<select class="form-control"  name="estado" id="estado" class="form-control" formControlName="estado">
+													<option value="0">Seleccionar...</option>
+													<option value="1">Uno</option>
+													<option value="2">Dos</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">Municipio</label>
+												<select class="form-control"  name="municipio" id="municipio" class="form-control" formControlName="municipio">
+													<option value="0">Seleccionar...</option>
+													<option value="1">Uno</option>
+													<option value="2">Dos</option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="form-group" formGroupName="ubicacion">
+												<div class="row">
+													<div class="col-md-4">
+														<div formArrayName="coordinates">
+															<div>
+																<div class="form-group">
+																	<label for="">Latitud</label>
+																	<input class="form-control" type="number" id="latitud" name="latitud" formControlName="1">
+																</div>
+
+																<div class="form-group">
+																	<label for="">Logitud</label>
+																	<input class="form-control" type="number" id="longitud" name="longitud" formControlName="0">
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-8">
+														<label for="">Mapa</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Social Media
+						<div class="card-actions">
+							<button class="btn-setting" type="button" (click)="agregarSocialMedia(organizacionForm)"><i class="icon-plus"></i></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div formArrayName="socialmedia">
+							<div *ngFor="let red of organizacionForm.controls.socialmedia.controls; let i=index;">
+								<div [formGroupName]="i">
+									<div class="row">
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">Red</label>
+												<select class="form-control" name="red" id="red" formControlName="red">
+													<option value="0">Seleccionar...</option>
+													<option value="1">Uno</option>
+													<option value="2">Dos</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-7">
+											<div class="form-group">
+												<label for="">URL</label>
+												<input class="form-control" type="text" name="url" id="url" formControlName="url">
+											</div>
+										</div>
+										<div class="col-md-1">
+											<label for="">Eliminar</label>
+											<button class="btn btn-md btn-danger"  type="button" (click)="removerSocialMedia(organizacionForm, i)"><i class="icon-close"></i></button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Teléfonos
+						<div class="card-actions">
+							<button class="btn-setting" type="button" (click)="agregarTelefono(organizacionForm)"><i class="icon-plus"></i></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div formArrayName="telefonos">
+							<div *ngFor="let telefono of organizacionForm.controls.telefonos.controls; let i=index;">
+								<div [formGroupName]="i">
+									<div class="row">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="">Lugar</label>
+										<select class="form-control" name="lugar" id="lugar" formControlName="lugar">
+											<option value="0">Seleccionar...</option>
+											<option value="1">Uno</option>
+											<option value="2">Dos</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-7">
+									<div class="form-group">
+										<label for="">Número</label>
+										<input class="form-control" type="text" name="numero" id="numero" formControlName="numero">
+									</div>
+								</div>
+								<div class="col-md-1">
+									<label for="">_</label>
+									<button class="btn btn-md btn-danger"  type="button" (click)="removerTelefono(organizacionForm, i)"><i class="icon-close"></i></button>
+								</div>
+							</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="col-md-2 text-right">
+				<button class="btn btn-md btn-dark text-white btn-block" type="submit" [disabled]="!organizacionForm.valid">Guardar</button>
+			</div>
+		</div>
+	</form>
+</div>

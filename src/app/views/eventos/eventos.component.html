@@ -1,0 +1,59 @@
+<div class="animated fadeIn">
+	<div class="row mb-2">
+		<div class="col-sm-6">
+			<h3 class="mb-0">Eventos</h3>
+			<h6><small>{{ eventosService.eventos.length }} elementos</small></h6>
+		</div>
+		<div class="col-sm-6 text-right pt-2">
+			<a class="btn btn-md btn-primary" [routerLink]="['nuevo']">Agregar Evento</a>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<table class="table table-responsive-sm table-hover table-outline mb-0" *ngIf="eventosService.eventos.length > 0">
+				<thead class="thead-light">
+					<tr>
+						<!--<th class="text-center"><i class="icon-people"></i></th>-->
+						<th>Evento</th>
+						<th>Tipo</th>
+						<th>Actividad</th>
+						<th class="text-center">Eliminar</th>
+						<th class="text-center">Editar</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let evento of eventosService.eventos">
+						<!--<td class="text-center">
+							<div class="avatar">
+								<img src="assets/img/avatars/1.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+								<span class="avatar-status badge-success"></span>
+							</div>
+						</td>-->
+						<td>
+							<h5 class="mb-0">{{ evento.nombre }}</h5>
+						</td>
+						<td>
+							{{ evento.tipo }}
+						</td>
+						<td>
+							<div class="small text-muted">Última modificación</div>
+							<div>{{ evento.updatedAt | date:'medium' }}</div>
+						</td>
+						<td class="text-center">
+							<a class="text-danger" (click)="eliminarCerveceria(evento.eventoid)">
+								<i class="fa fa-trash" style="font-size:24px"></i>
+							</a>
+						</td>
+						<td class="text-center">
+							<a class="text-info" [routerLink]="['editar', evento.eventoid ]">
+								<i class="fa fa-pencil" style="font-size:24px"></i>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</div>

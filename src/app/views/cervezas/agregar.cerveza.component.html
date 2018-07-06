@@ -1,0 +1,137 @@
+<div class="animated fadeIn">
+	<form [formGroup]="cervezaForm" (ngSubmit)="guardarCerveza()" novalidate>
+		<div class="row">
+			<div class="col-md-10">
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Información General
+						<div class="card-actions">
+							<a class="btn-close" href="#"><i class="icon-arrow-up"></i></a>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-8">
+								<div class="form-group">
+									<label for="id-cerveceria">ID</label>
+									<input 
+										class="form-control form-control-sm"
+										id="cervezaid"
+										name="cervezaid"
+										type="text"
+										formControlName="cervezaid">
+								</div>
+								<div class="form-group">
+									<label for="nombre-cerveceria">Nombre</label>
+									<input 
+										class="form-control form-control-lg"
+										[ngClass]="{ 'is-invalid': !cervezaForm.get('nombre').valid && cervezaForm.get('nombre').touched }"
+										id="nombre"
+										name="nombre"
+										type="text"
+										formControlName="nombre">
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="nf-email">Estilo</label>
+											<select class="form-control" id="tipo-cerveceria" name="tipo-cerveceria">
+												<option value="0">Seleccionar...</option>
+												<option value="1">Uno</option>
+												<option value="2">Dos</option>
+												<option value="3">Tres</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<!--<label for="">Disponible</label>-->
+											<p>Disponible</p>
+											<label class="switch switch-icon switch-primary">
+												<input 
+													type="checkbox" 
+													class="switch-input" 
+													name="disponibilidad" 
+													formControlName="disponibilidad" 
+													checked>
+												<span class="switch-label" data-on="&#xf00c;" data-off="&#xf00d;"></span>
+												<span class="switch-handle"></span>
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label for="id-cerveceria">Imagen Principal</label>
+									<div class="card text-dark bg-secondary text-center" style="min-height: 230px;">
+										<div class="card-body">
+											<!--<input id="file-input" name="file-input" type="file">-->
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-12">
+								<div class="form-group">
+									<label for="descripcion-cerveceria">Descripción</label>
+									<textarea
+										class="form-control"
+										id="descripcion"
+										name="descripcion"
+										rows="4"
+										formControlName="descripcion">
+									</textarea>
+								</div>
+
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label for="nf-email">IBU</label>
+											<input 
+												class="form-control" 
+												type="number" 
+												id="ibu"
+												name="ibu"
+												formControlName="ibu">
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label for="nf-email">ABV</label>
+											<input 
+												class="form-control" 
+												type="text" 
+												id="abv"
+												name="abv"
+												formControlName="abv">
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label for="nf-email">SRM</label>
+											<input 
+												class="form-control" 
+												type="number" 
+												id="srm"
+												name="srm"
+												formControlName="srm">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="col-md-2 text-right">
+				<button class="btn btn-md btn-dark text-white btn-block" type="submit" [disabled]="!cervezaForm.valid">Guardar</button>
+			</div>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,359 @@
+<div class="animated fadeIn">
+	<form [formGroup]="cerveceriaForm" (ngSubmit)="guardarCerveceria()" novalidate autocomplete="off">
+		<div class="row">
+			<div class="col-md-10">
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Información General
+						<div class="card-actions">
+							<a class="btn-close" ><i class="icon-arrow-up"></i></a>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-8">
+								<div class="form-group">
+									<label for="cerveceriaid">ID</label>
+									<input
+										class="form-control form-control-sm"
+										id="cerveceriaid"
+										name="cerveceriaid"
+										type="text"
+										formControlName="cerveceriaid">
+								</div>
+								<div class="form-group">
+									<label for="nombre">Nombre</label>
+									<input
+										class="form-control form-control-lg"
+										[ngClass]="{ 'is-invalid': !cerveceriaForm.get('nombre').valid && cerveceriaForm.get('nombre').touched }"
+										id="nombre"
+										name="nombre"
+										type="text"
+										formControlName="nombre">
+									<div *ngIf="cerveceriaForm.controls.nombre.errors?.required" class="invalid-feedback">
+										<div>Requerido</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="tipo">Tipo</label>
+									<select
+										class="form-control"
+										[ngClass]="{ 'is-invalid': !cerveceriaForm.get('tipo').valid && cerveceriaForm.get('tipo').touched }"
+										id="tipo"
+										name="tipo"
+										formControlName="tipo">
+										<option value="">Seleccionar...</option>
+										<option [value]="item" *ngFor="let item of tiposCerveceria | enumToArray">{{item}}</option>
+									</select>
+									<div *ngIf="cerveceriaForm.controls.tipo.errors?.required" class="invalid-feedback">
+										<div>Requerido</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label for="id-cerveceria">Imagen Principal</label>
+									<div class="card text-dark bg-secondary text-center" style="min-height: 230px;">
+										<div class="card-body">
+											<!--<input id="file-input" name="file-input" type="file">-->
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-12">
+								<div class="form-group">
+									<label for="descripcion">Descripción</label>
+									<textarea
+										class="form-control"
+										id="descripcion"
+										name="descripcion"
+										rows="4"
+										formControlName="descripcion">
+									</textarea>
+								</div>
+								<div class="form-group">
+									<label for="cervecero">Cervecero</label>
+									<input
+										class="form-control"
+										id="cervecero"
+										name="cervecero"
+										type="text"
+										formControlName="cervecero">
+								</div>
+								<div class="form-group">
+									<label for="fundacion">Fundación</label>
+									<input 
+										class="form-control"
+										id="fundacion"
+										name="fundacion"
+										type="text"
+										formControlName="fundacion"
+										[minDate]="minDate"
+										[maxDate]="maxDate"
+										#dp="bsDatepicker"
+										bsDatepicker 
+										value="{{ cerveceriaForm.value.fundacion | date: 'dd/MM/yyyy' }}"
+										[(ngModel)]="cerveceriaForm.value.fundacion">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Direcciones
+						<div class="card-actions">
+							<button class="btn-setting" type="button" (click)="agregarDireccion(cerveceriaForm)"><i class="icon-plus"></i></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div formArrayName="direcciones">
+							<div *ngFor="let direccion of cerveceriaForm.controls.direcciones.controls; let i=index;">
+								<div [formGroupName]="i">
+									<div class="row">
+										<div class="col-6">
+											<h3>Dirección: {{ i }}</h3>
+										</div>
+										<div class="col-6 text-right">
+											<button class="btn btn-md btn-danger" (click)="removerDireccion(cerveceriaForm,i)"><i class="icon-close"></i></button>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="form-group">
+												<label for="descripcion-cerveceria">Dirección</label>
+												<textarea
+															class="form-control"
+															id="descripcion-cerveceria"
+															name="textarea-input"
+															rows="2"
+															formControlName="direccion">
+												</textarea>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">País</label>
+												<ng-select 
+													[allowClear]="true"
+													[items]="countries"
+													(data)="refreshValueCountry( $event, cerveceriaForm, i )"
+													[active]="[getActiveCountry( cerveceriaForm, i)]" 
+													placeholder="Seleccionar..." 
+													autocomplete="off">
+												</ng-select>
+												<input type="hidden" name="pais" id="pais" [(ngModel)]="cerveceriaForm.value.direcciones[i].pais" formControlName="pais">
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="form-group" *ngIf="estados[i]">
+												<label for="">Estado</label>
+												<ng-select 
+													[allowClear]="true"
+													[items]="estados[i]"
+													(data)="refreshValueState( $event, cerveceriaForm, i )"
+													[active]="[getActiveState( cerveceriaForm, i )]" 
+													placeholder="Seleccionar..." >
+												</ng-select>
+												<input type="hidden" name="estado" id="estado" [(ngModel)]="cerveceriaForm.value.direcciones[i].estado" formControlName="estado">
+											</div>
+										</div>
+										<div class="col-md-4">
+											<div class="form-group" *ngIf="cerveceriaForm.value.direcciones[i].estado" >
+												<label for="">Municipio</label>
+												<input class="form-control" type="text" id="municipio" name="municipio" formControlName="municipio">
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="form-group" formGroupName="ubicacion">
+												<div class="row">
+													<div class="col-md-4">
+														<div formArrayName="coordinates">
+															<div>
+																<div class="form-group">
+																	<label for="">Latitud</label>
+																	<input class="form-control" type="number" id="latitud" name="latitud" formControlName="1">
+																</div>
+
+																<div class="form-group">
+																	<label for="">Logitud</label>
+																	<input class="form-control" type="number" id="longitud" name="longitud" formControlName="0">
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-8">
+														<label for="">Mapa</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Social Media
+						<div class="card-actions">
+							<button class="btn-setting" type="button" (click)="agregarSocialMedia( cerveceriaForm )"><i class="icon-plus"></i></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div formArrayName="socialmedia">
+							<div *ngFor="let red of cerveceriaForm.controls.socialmedia.controls; let i=index;">
+								<div [formGroupName]="i">
+									<div class="row">
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="">Red</label>
+												<ng-select 
+													[allowClear]="true"
+													[items]="socialNetworks"
+													(data)="refreshValueSocialNetwork( $event, cerveceriaForm, i )"
+													[active]="[getActiveSocialNetwork( cerveceriaForm, i )]" 
+													placeholder="Seleccionar...">
+												</ng-select>
+												<input type="hidden" name="red" id="red"[(ngModel)]="cerveceriaForm.value.socialmedia[i].red" formControlName="red">
+											</div>
+										</div>
+										<div class="col-md-7">
+											<div class="form-group">
+												<label for="">URL</label>
+												<input class="form-control" type="text" name="url" id="url" formControlName="url">
+											</div>
+										</div>
+										<div class="col-md-1">
+											<label for="">Eliminar</label>
+											<button class="btn btn-md btn-danger" type="button" (click)="removerSocialMedia( cerveceriaForm, i )"><i class="icon-close"></i></button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Teléfonos
+						<div class="card-actions">
+							<button class="btn-setting" type="button" (click)="agregarTelefono( cerveceriaForm )"><i class="icon-plus"></i></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<div formArrayName="telefonos">
+							<div *ngFor="let telefono of cerveceriaForm.controls.telefonos.controls; let i=index;">
+								<div [formGroupName]="i">
+									<div class="row">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="">Lugar</label>
+										<ng-select 
+											[allowClear]="true"
+											[items]="phoneTypes"
+											(data)="refreshValuePhoneType($event, cerveceriaForm, i)"
+											[active]="[getActivePhoneType( cerveceriaForm, i )]" 
+											placeholder="Seleccionar...">
+										</ng-select>
+										<input type="hidden" name="lugar" id="lugar"[(ngModel)]="cerveceriaForm.value.telefonos[i].lugar" formControlName="lugar">
+									</div>
+								</div>
+								<div class="col-md-7">
+									<div class="form-group">
+										<label for="">Número</label>
+										<input class="form-control" type="text" name="numero" id="numero" formControlName="numero">
+									</div>
+								</div>
+								<div class="col-md-1">
+									<label for="">_</label>
+									<button class="btn btn-md btn-danger" type="button" (click)="removerTelefono( cerveceriaForm, i )"><i class="icon-close"></i></button>
+								</div>
+							</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+
+				<div class="card">
+					<div class="card-header bg-secondary">
+						Cervezas
+						<div class="card-actions">
+							<a class="btn-setting" href="#"><i class="icon-plus"></i></a>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-12">
+
+								<div class="form-group row">
+									<div class="col-md-12">
+										<div class="input-group">
+											<span class="input-group-prepend">
+												<button class="btn btn-primary" type="button"><i class="fa fa-search"></i> Buscar</button>
+											</span>
+											<input class="form-control" id="input1-group2" name="input1-group2" placeholder="Cerveza" type="text">
+										</div>
+									</div>
+								</div>
+								
+								
+								<div class="row my-1">
+									<div class="col-1">
+										<img class="img-fluid" src="assets/img/icons/brewery.png" alt="">
+									</div>
+									<div class="col-10">
+										<h5 class="mb-0">Nombre Cerveza</h5>
+										<small>Lugar</small>
+									</div>
+									<div class="col-1">
+										<button class="btn btn-primary" type="button"><i class="fa fa-check-circle"></i></button>
+									</div>
+								</div>
+								<div class="row my-1">
+									<div class="col-1">
+										<img class="img-fluid" src="assets/img/icons/brewery.png" alt="">
+									</div>
+									<div class="col-10">
+										<h5 class="mb-0">Nombre Cerveza</h5>
+										<small>Lugar</small>
+									</div>
+									<div class="col-1">
+										<button class="btn btn-primary" type="button"><i class="fa fa-check-circle"></i></button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row mt-2">
+							<div class="col-3">
+								<div class="card text-dark bg-secondary text-center" style="min-height: 180px;">
+									<!--Contenido Aquí-->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="col-md-2 text-right">
+				<button class="btn btn-md btn-dark text-white btn-block" type="submit" [disabled]="!cerveceriaForm.valid">Guardar</button>
+			</div>
+		</div>
+	</form>
+</div>
